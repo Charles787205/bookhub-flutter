@@ -1,10 +1,9 @@
 import 'package:bookhub/components/auth_manager.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:bookhub/objects/user.dart';
 import 'package:bookhub/scripts/database.dart';
 import 'package:provider/provider.dart';
+import 'package:bookhub/widgets/logo.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -30,83 +29,73 @@ class _LoginPageState extends State<LoginPage> {
         centerTitle: true,
         backgroundColor: Theme.of(context).primaryColor,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 200),
-                const Text("Book",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 50)),
-                Text("Hub",
-                    style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 50))
-              ],
-            ),
-            const SizedBox(height: 50),
-            const Text("Email:"),
-            const SizedBox(height: 10),
-            TextField(
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Enter your email',
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Logo(fontSize: 50),
+              const SizedBox(height: 50),
+              const Text("Email:"),
+              const SizedBox(height: 10),
+              TextField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter your email',
+                ),
+                onChanged: (value) => _email = value,
               ),
-              onChanged: (value) => _email = value,
-            ),
-            const Text("Password:"),
-            const SizedBox(height: 10),
-            TextField(
-              obscureText: true,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Enter your email',
+              const Text("Password:"),
+              const SizedBox(height: 10),
+              TextField(
+                obscureText: true,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter your email',
+                ),
+                onChanged: (value) => _password = value,
               ),
-              onChanged: (value) => _password = value,
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                fixedSize: const Size(500, 50),
+              const SizedBox(
+                height: 30,
               ),
-              onPressed: () async {
-                User? user = await DatabaseConnector.login(_email, _password);
-                if (user != null) {
-                  if (context.mounted) {
-                    context.read<AuthManager>().setUser(user);
-                    Navigator.pushNamed(context, '/');
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  fixedSize: const Size(500, 50),
+                ),
+                onPressed: () async {
+                  User? user = await DatabaseConnector.login(_email, _password);
+                  print("User: $user");
+                  if (user != null) {
+                    if (context.mounted) {
+                      context.read<AuthManager>().setUser(user);
+
+                      Navigator.popAndPushNamed(context, '/');
+                    }
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Invalid email or password!')),
+                    );
                   }
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Invalid email or password!')),
-                  );
-                }
-              },
-              child: const Text('Login'),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                fixedSize: const Size(500, 50),
+                },
+                child: const Text('Login'),
               ),
-              onPressed: () {
-                Navigator.pushNamed(context, '/register');
-              },
-              child: const Text('Register'),
-            ),
-          ],
+              const SizedBox(
+                height: 10,
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  fixedSize: const Size(500, 50),
+                ),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/register');
+                },
+                child: const Text('Register'),
+              ),
+            ],
+          ),
         ),
       ),
     );

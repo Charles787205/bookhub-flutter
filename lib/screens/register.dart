@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:bookhub/scripts/database.dart';
 import 'package:bookhub/objects/user.dart';
 import 'package:provider/provider.dart';
+import 'package:bookhub/widgets/logo.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -56,86 +57,73 @@ class _RegisterPageState extends State<RegisterPage> {
           centerTitle: true,
           backgroundColor: Theme.of(context).primaryColor,
         ),
-        body: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Column(children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 100),
-                  const Text("Book",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 50)),
-                  Text("Hub",
-                      style: TextStyle(
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 50))
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              TextField(
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter your first name',
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10)),
-                onChanged: (value) => _firstName = value,
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter your middle name',
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10)),
-                onChanged: (value) => _middleName = value,
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter your last name',
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10)),
-                onChanged: (value) => _lastName = value,
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter your email',
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10)),
-                onChanged: (value) => _email = value,
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter your password',
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10)),
-                onChanged: (value) => _password = value,
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Re-enter your password',
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10)),
-                onChanged: (value) => _password1 = value,
-              ),
-              const SizedBox(height: 10),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  fixedSize: const Size(500, 50),
+        body: SingleChildScrollView(
+          child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(children: [
+                Logo(fontSize: 50),
+                const SizedBox(
+                  height: 20,
                 ),
-                onPressed: () {
-                  register();
-                },
-                child: const Text("Register"),
-              )
-            ])));
+                TextField(
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Enter your first name',
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+                  onChanged: (value) => _firstName = value,
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Enter your middle name',
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+                  onChanged: (value) => _middleName = value,
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Enter your last name',
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+                  onChanged: (value) => _lastName = value,
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Enter your email',
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+                  onChanged: (value) => _email = value,
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Enter your password',
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+                  onChanged: (value) => _password = value,
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Re-enter your password',
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10)),
+                  onChanged: (value) => _password1 = value,
+                ),
+                const SizedBox(height: 10),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    fixedSize: const Size(500, 50),
+                  ),
+                  onPressed: () {
+                    register();
+                  },
+                  child: const Text("Register"),
+                )
+              ])),
+        ));
   }
 }
