@@ -1,25 +1,26 @@
 import 'package:bookhub/components/auth_manager.dart';
-import 'package:bookhub/objects/borrowed_books.dart';
-import 'package:flutter/material.dart';
-import 'package:bookhub/screens/layout.dart';
-import 'package:provider/provider.dart';
-import 'package:bookhub/scripts/database.dart';
 import 'package:google_books_api/google_books_api.dart';
 import 'package:bookhub/screens/categories/book_details.dart';
+import 'package:flutter/material.dart';
+import 'package:bookhub/screens/layout.dart';
+import 'package:bookhub/widgets/rate_dialog.dart';
+import 'package:provider/provider.dart';
+import 'package:bookhub/scripts/database.dart';
+import 'package:bookhub/objects/db_book.dart' as dbBook;
 
-class BorrowedBooksPage extends StatefulWidget {
-  const BorrowedBooksPage({super.key});
+class Favorites extends StatefulWidget {
+  const Favorites({super.key});
 
   @override
-  State<BorrowedBooksPage> createState() => _BorrowedBooksPageState();
+  State<Favorites> createState() => _FavoritesState();
 }
 
-class _BorrowedBooksPageState extends State<BorrowedBooksPage> {
+class _FavoritesState extends State<Favorites> {
   @override
   Widget build(BuildContext context) {
     var userId = context.read<AuthManager>().user!.id!;
-    Future<List<BorrowedBooks>> borrowedBooks =
-        DatabaseConnector.getBorrowedBooks(userId);
+    Future<List<dbBook.Book>> books = DatabaseConnector.getFavorites(userId);
+
     void onCardClick(String bookId) async {
       Book book = await const GoogleBooksApi().getBookById(bookId);
       if (context.mounted) {
@@ -32,11 +33,11 @@ class _BorrowedBooksPageState extends State<BorrowedBooksPage> {
 
     return LayoutPage(
       title: const Text(
-        "Borrowed Books",
+        "Favorites",
         style: TextStyle(color: Colors.white),
       ),
-      child: FutureBuilder<List<BorrowedBooks>>(
-          future: borrowedBooks,
+      child: FutureBuilder<List<dbBook.Book>>(
+          future: books,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -44,9 +45,6 @@ class _BorrowedBooksPageState extends State<BorrowedBooksPage> {
               return ListView.builder(
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
-                    var dueDate = snapshot.data![index].dueDate;
-                    var daysLeft = dueDate?.difference(DateTime.now()).inDays;
-
                     return Card(
                         margin: const EdgeInsets.all(1),
                         color: Colors.white,
@@ -54,21 +52,15 @@ class _BorrowedBooksPageState extends State<BorrowedBooksPage> {
                             borderRadius: BorderRadius.circular(3)),
                         elevation: 2.0,
                         child: ListTile(
-                          leading: Image.network(
-                              snapshot.data![index].book?.image ?? ""),
-                          title: Text(snapshot.data![index].book?.title ?? ""),
-                          subtitle: daysLeft! > 0
-                              ? Text("Due in $daysLeft days")
-                              : const Text(
-                                  "Overdue",
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                          onTap: () =>
-                              onCardClick(snapshot.data![index].book!.id),
+                          leading:
+                              Image.network(snapshot.data![index].image ?? ""),
+                          title: Text(snapshot.data![index].title ?? ""),
+                          onTap: () => {onCardClick(snapshot.data![index].id)},
                         ));
                   });
             }
           }),
     );
+    ;
   }
 }

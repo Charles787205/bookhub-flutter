@@ -102,6 +102,13 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     DashboardButton(
+                      title: "Favorites",
+                      icon: Icons.account_circle_rounded,
+                      onPressed: () {
+                        Navigator.pushNamed(context, "/favorites");
+                      },
+                    ),
+                    DashboardButton(
                       title: "Logout",
                       icon: Icons.accessibility_outlined,
                       onPressed: () {

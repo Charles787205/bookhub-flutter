@@ -1,16 +1,15 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:bookhub/screens/login.dart';
 import 'package:bookhub/screens/register.dart';
 import 'package:bookhub/components/auth_manager.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:provider/provider.dart';
 import 'package:bookhub/screens/home.dart';
 import 'package:bookhub/screens/categories/categories.dart';
-import 'package:bookhub/screens/categories/category.dart';
+
 import 'package:bookhub/screens/borrowed_books/borrowed_books.dart';
 import 'package:bookhub/screens/returned_books/returned_books.dart';
+import 'package:bookhub/screens/favorites/favorites.dart';
 
 void main() {
   runApp(MultiProvider(
@@ -48,7 +47,8 @@ class MyApp extends StatelessWidget {
         '/register': (context) => const RegisterPage(),
         '/categories': (context) => const CategoriesPage(),
         '/borrowed_books': (context) => const BorrowedBooksPage(),
-        '/returned_books': (context) => const ReturnedBooksPage()
+        '/returned_books': (context) => const ReturnedBooksPage(),
+        '/favorites': (context) => const Favorites(),
       },
     );
   }
