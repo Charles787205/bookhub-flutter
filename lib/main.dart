@@ -1,3 +1,5 @@
+import 'package:bookhub/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:bookhub/screens/login.dart';
 import 'package:bookhub/screens/register.dart';
@@ -11,7 +13,10 @@ import 'package:bookhub/screens/borrowed_books/borrowed_books.dart';
 import 'package:bookhub/screens/returned_books/returned_books.dart';
 import 'package:bookhub/screens/favorites/favorites.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(
@@ -38,6 +43,7 @@ class MyApp extends StatelessWidget {
       ),
       home: Consumer<AuthManager>(builder: (context, authManager, _) {
         if (authManager.user == null) {
+          print("NULL KUNO");
           return const LoginPage();
         }
         return const HomePage();

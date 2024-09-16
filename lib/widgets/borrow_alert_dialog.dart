@@ -106,7 +106,7 @@ class ConfirmBorrow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Borrow Request"),
+      title: const Text("Borrow Request"),
       content: const Text(
           "Your request has been sent to the admin. Please go to the library to get the book."),
       actions: [
@@ -114,7 +114,7 @@ class ConfirmBorrow extends StatelessWidget {
             onPressed: () {
               Navigator.pop(context);
             },
-            child: Text("Confirm"))
+            child: const Text("Confirm"))
       ],
     );
   }

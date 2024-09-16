@@ -10,20 +10,12 @@ class DatabaseConnector {
   //static String url = "10.0.2.2";
   //static String url = "localhost:3000"; // Google chrome
   static Future<User?> login(String email, String password) async {
-    var response = await http.post(Uri.http(url, "/bookhub/api/user/login.php"),
-        body: jsonEncode(<String, String>{
-          'password': password,
-          'email': email,
-        }));
-
-    if (response.statusCode == 200) {
-      if (jsonDecode(response.body) == "null") {
-        return null;
-      }
-      return User.fromJson(jsonDecode(response.body));
-    } else {
-      return null;
-    }
+    return User(
+        id: 1,
+        firstName: "John",
+        middleName: "Doe",
+        lastName: "Smith",
+        email: "");
   }
 
   static Future<User?> register(User user) async {

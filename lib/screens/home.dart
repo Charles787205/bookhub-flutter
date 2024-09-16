@@ -14,7 +14,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  var isSearching = false;
+  var _isSearching = false;
   var searchText = "";
   Future<List<Book>> books = Future.value([]);
   var dueCount = 0;
@@ -27,23 +27,15 @@ class _HomePageState extends State<HomePage> {
           maxResults: 10,
           orderBy: OrderBy.relevance);
     }
-    DatabaseConnector.getDueCount(context.read<AuthManager>().user!.id!)
-        .then((value) {
-      if (dueCount != value) {
-        setState(() {
-          dueCount = value;
-        });
-      }
-    });
 
     return Scaffold(
         appBar: AppBar(
-            automaticallyImplyLeading: isSearching,
-            leading: isSearching
+            automaticallyImplyLeading: _isSearching,
+            leading: _isSearching
                 ? IconButton(
                     icon: const Icon(Icons.arrow_back),
                     onPressed: () => setState(() {
-                      isSearching = false;
+                      _isSearching = false;
                       FocusScope.of(context).unfocus();
                     }),
                   )
@@ -68,10 +60,10 @@ class _HomePageState extends State<HomePage> {
                   prefixIcon: Icon(Icons.search),
                   hintText: "Search Book"),
               onTap: () {
-                setState(() => isSearching = true);
+                setState(() => _isSearching = true);
               },
             )),
-        body: !isSearching
+        body: !_isSearching
             ? Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: GridView.count(
