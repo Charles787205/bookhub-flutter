@@ -15,7 +15,7 @@ class Logo extends StatelessWidget {
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
                 fontSize: fontSize)),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(

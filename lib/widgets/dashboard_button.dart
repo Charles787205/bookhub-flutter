@@ -61,6 +61,5 @@ class DashboardButton extends StatelessWidget {
           ),
         ),
     ]);
-    ;
   }
 }

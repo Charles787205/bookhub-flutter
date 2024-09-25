@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:bookhub/scripts/database.dart';
 
 class RateDialog extends StatefulWidget {
   const RateDialog({super.key});

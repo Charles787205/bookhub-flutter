@@ -1,7 +1,6 @@
 import 'package:bookhub/components/auth_manager.dart';
 import 'package:bookhub/scripts/database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_books_api/google_books_api.dart';
 import 'package:provider/provider.dart';
 

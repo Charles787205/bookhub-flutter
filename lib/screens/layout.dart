@@ -1,7 +1,4 @@
-import 'package:bookhub/objects/user.dart';
-import 'package:bookhub/components/auth_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class LayoutPage extends StatefulWidget {
   final Widget child;

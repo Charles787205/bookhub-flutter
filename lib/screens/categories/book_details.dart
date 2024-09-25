@@ -159,7 +159,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                   int? rating = await showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return RateDialog();
+                        return const RateDialog();
                       });
                   if (rating != null) {
                     DatabaseConnector.rateBook(book.id, userId, rating);

@@ -61,6 +61,5 @@ class _FavoritesState extends State<Favorites> {
             }
           }),
     );
-    ;
   }
 }

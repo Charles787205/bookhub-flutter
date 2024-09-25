@@ -14,6 +14,7 @@ class CategoryPage extends StatefulWidget {
 
 class _CategoryPageState extends State<CategoryPage> {
   List<Book> books = [];
+  @override
   void initState() {
     super.initState();
     fetchBooks();
