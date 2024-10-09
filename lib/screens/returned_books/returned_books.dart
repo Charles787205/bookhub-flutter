@@ -1,7 +1,6 @@
-import 'package:bookhub/components/auth_manager.dart';
+import 'package:bookhub/scripts/firebasehandler.dart';
 import 'package:flutter/material.dart';
 import 'package:bookhub/screens/layout.dart';
-import 'package:bookhub/scripts/database.dart';
 import 'package:provider/provider.dart';
 
 class ReturnedBooksPage extends StatefulWidget {
@@ -14,8 +13,10 @@ class ReturnedBooksPage extends StatefulWidget {
 class _ReturnedBooksPageState extends State<ReturnedBooksPage> {
   @override
   Widget build(BuildContext context) {
-    var userId = context.read<AuthManager>().user!.id!;
-    var returnedBooks = DatabaseConnector.getReturnedBooks(userId);
+    var firebaseHandler = Provider.of<FirebaseHandler>(context);
+    var userId = firebaseHandler.user?.id;
+    var returnedBooks = firebaseHandler.getReturnedBooks();
+
     return LayoutPage(
         title:
             const Text("Returned Books", style: TextStyle(color: Colors.white)),
@@ -41,10 +42,13 @@ class _ReturnedBooksPageState extends State<ReturnedBooksPage> {
                                 borderRadius: BorderRadius.circular(3)),
                             elevation: 2.0,
                             child: ListTile(
-                              leading: Image.network(
-                                  snapshot.data![index].book?.image ?? ""),
-                              title:
-                                  Text(snapshot.data![index].book?.title ?? ""),
+                              leading: Image.network(snapshot.data![index].book
+                                      ?.volumeInfo.imageLinks?['smallThumbnail']
+                                      .toString() ??
+                                  ""),
+                              title: Text(snapshot
+                                      .data![index].book?.volumeInfo.title ??
+                                  ""),
                               subtitle: Text(
                                 daysReturned > 1
                                     ? "$daysReturned days ago"

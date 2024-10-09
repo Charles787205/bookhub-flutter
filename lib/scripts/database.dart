@@ -11,7 +11,7 @@ class DatabaseConnector {
   //static String url = "localhost:3000"; // Google chrome
   static Future<User?> login(String email, String password) async {
     return User(
-        id: 1,
+        id: "1",
         firstName: "John",
         middleName: "Doe",
         lastName: "Smith",
@@ -23,10 +23,9 @@ class DatabaseConnector {
         await http.post(Uri.http(url, "/bookhub/api/user/register.php"),
             body: jsonEncode(<String, String>{
               'first_name': user.firstName,
-              'middle_name': user.middleName,
+              'middle_name': user.middleName!,
               'last_name': user.lastName,
               'email': user.email,
-              'password': user.password!,
             }));
 
     if (response.statusCode == 200) {

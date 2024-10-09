@@ -1,14 +1,16 @@
 import 'package:bookhub/components/auth_manager.dart';
 import 'package:bookhub/screens/categories/book_details.dart';
 import 'package:bookhub/scripts/firebasehandler.dart';
-import 'package:bookhub/widgets/HomeDrawer.dart';
+import 'package:bookhub/widgets/book_carousel.dart';
+import 'package:bookhub/widgets/custom_navbar.dart';
+import 'package:bookhub/widgets/home_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:google_books_api/google_books_api.dart';
 import 'package:bookhub/widgets/dashboard_button.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -35,6 +37,11 @@ class _HomePageState extends State<HomePage> {
           maxResults: 10,
           orderBy: OrderBy.relevance);
     }
+    books.then((value) {
+      print(value);
+    }, onError: (error) {
+      print("HTe problem $error");
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -57,7 +64,7 @@ class _HomePageState extends State<HomePage> {
                         },
                         child: CircleAvatar(
                           backgroundImage: NetworkImage(
-                              firebaseHandler.user!.photoUrl ?? ""),
+                              firebaseHandler.gUser!.photoUrl ?? ""),
                         ),
                       ),
                     );
@@ -87,14 +94,59 @@ class _HomePageState extends State<HomePage> {
             },
           )),
       drawer: HomeDrawer(),
+      bottomNavigationBar: const CustomNavbar(),
       body: !_isSearching
-          ? Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                height: 100,
-                width: 300,
-                child: Placeholder(),
-              ))
+          ? const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Horror",
+                        style: TextStyle(
+                            fontSize: 30, fontWeight: FontWeight.bold),
+                      ),
+                      BookCarousel(category: "horror"),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        "Thriller",
+                        style: TextStyle(
+                            fontSize: 30, fontWeight: FontWeight.bold),
+                      ),
+                      BookCarousel(category: "thriller"),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        "Romance",
+                        style: TextStyle(
+                            fontSize: 30, fontWeight: FontWeight.bold),
+                      ),
+                      BookCarousel(category: "romance"),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        "Fantasy",
+                        style: TextStyle(
+                            fontSize: 30, fontWeight: FontWeight.bold),
+                      ),
+                      BookCarousel(category: "fantasy"),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        "Action",
+                        style: TextStyle(
+                            fontSize: 30, fontWeight: FontWeight.bold),
+                      ),
+                      BookCarousel(category: "action"),
+                    ],
+                  )))
           : FutureBuilder(
               future: books,
               builder: (context, snapshot) {
@@ -130,11 +182,9 @@ class _HomePageState extends State<HomePage> {
                                         .data![index].volumeInfo.authors
                                         .join(", ")),
                                     onTap: () {
-                                      Navigator.push(context,
-                                          MaterialPageRoute(builder: (context) {
-                                        return BookDetailsPage(
-                                            book: snapshot.data![index]);
-                                      }));
+                                      Navigator.pushNamed(
+                                          context, "/book_details",
+                                          arguments: snapshot.data![index]);
                                     }));
                           })
                       : const Center(child: Text("No books found"));

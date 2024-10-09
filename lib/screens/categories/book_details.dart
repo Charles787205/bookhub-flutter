@@ -1,14 +1,13 @@
 import 'package:bookhub/widgets/rate_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:bookhub/components/auth_manager.dart';
+import 'package:bookhub/scripts/firebasehandler.dart';
 import 'package:google_books_api/google_books_api.dart';
 import 'package:bookhub/widgets/borrow_alert_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:bookhub/scripts/database.dart';
 
 class BookDetailsPage extends StatefulWidget {
-  final Book book;
-  const BookDetailsPage({super.key, required this.book});
+  const BookDetailsPage({super.key});
 
   @override
   State<BookDetailsPage> createState() => _BookDetailsPageState();
@@ -17,10 +16,12 @@ class BookDetailsPage extends StatefulWidget {
 class _BookDetailsPageState extends State<BookDetailsPage> {
   @override
   Widget build(BuildContext context) {
-    var isImagePresent = widget.book.volumeInfo.imageLinks != null;
-    var book = widget.book;
-    var userId = context.read<AuthManager>().user!.id!;
-    var rating = DatabaseConnector.getRating(book.id);
+    var firebaseHandler = Provider.of<FirebaseHandler>(context);
+    Book book = ModalRoute.of(context)?.settings.arguments as Book;
+    var isBorrowed = firebaseHandler.isBorrowed(book.id);
+    var isImagePresent = book.volumeInfo.imageLinks != null;
+
+    var rating = firebaseHandler.getRating(book.id);
     return Scaffold(
         appBar: AppBar(
             leading: IconButton(
@@ -42,20 +43,19 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
               child: Column(
                 children: [
                   isImagePresent
-                      ? Image.network(widget
-                          .book.volumeInfo.imageLinks!['thumbnail']
-                          .toString())
+                      ? Image.network(
+                          book.volumeInfo.imageLinks!['thumbnail'].toString())
                       : const Icon(Icons.book_online),
                   const SizedBox(
                     height: 10,
                   ),
                   Text(
-                    widget.book.volumeInfo.title,
+                    book.volumeInfo.title,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    widget.book.volumeInfo.authors.join(", "),
+                    book.volumeInfo.authors.join(", "),
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(
@@ -67,7 +67,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    widget.book.volumeInfo.description.replaceAll("//n", "/n"),
+                    book.volumeInfo.description.replaceAll("//n", "/n"),
                     textAlign: TextAlign.justify,
                     style: const TextStyle(
                       fontSize: 16,
@@ -78,7 +78,16 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
+                          return Text(
+                            snapshot.data != null
+                                ? snapshot.data.toString()
+                                : "No rating",
+                            style: const TextStyle(fontSize: 16),
+                          );
+                          /*
+                          
                           return const CircularProgressIndicator();
+                          */
                         } else {
                           return Column(
                             children: [
@@ -103,22 +112,94 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                   const SizedBox(
                     height: 60,
                   ),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        fixedSize: const Size(200, 30),
-                      ),
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return BorrowAlertDialog(book: book);
-                            });
-                      },
-                      child: const Text(
-                        "Borrow",
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      )),
+                  FutureBuilder(
+                      future: isBorrowed,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        } else {
+                          if (snapshot.data == true) {
+                            return ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      Theme.of(context).primaryColor,
+                                  fixedSize: const Size(200, 30),
+                                ),
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text("Return Book"),
+                                          content: const Text(
+                                              "Are you sure you want to return this book?"),
+                                          actions: [
+                                            ElevatedButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: const Text("Cancel")),
+                                            ElevatedButton(
+                                                onPressed: () {
+                                                  firebaseHandler
+                                                      .returnBook(book.id);
+                                                  Navigator.pop(context);
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return AlertDialog(
+                                                          title: const Text(
+                                                              "Return Book"),
+                                                          content: const Text(
+                                                              "Book returned."),
+                                                          actions: [
+                                                            ElevatedButton(
+                                                                onPressed: () {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                },
+                                                                child:
+                                                                    const Text(
+                                                                  "OK",
+                                                                ))
+                                                          ],
+                                                        );
+                                                      });
+                                                },
+                                                child: const Text("Return"))
+                                          ],
+                                        );
+                                      });
+                                },
+                                child: const Text(
+                                  "Return Book",
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.white),
+                                ));
+                          } else {
+                            return ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      Theme.of(context).primaryColor,
+                                  fixedSize: const Size(200, 30),
+                                ),
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return BorrowAlertDialog(book: book);
+                                      });
+                                },
+                                child: const Text(
+                                  "Borrow",
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.white),
+                                ));
+                          }
+                        }
+                      })
                 ],
               ),
             ),
@@ -130,14 +211,17 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
             FloatingActionButton(
               heroTag: 'favorite',
               child: const Icon(Icons.star),
-              onPressed: () {
-                DatabaseConnector.addFavorites(book, userId);
+              onPressed: () async {
+                var isAdded = await firebaseHandler.addToFavorites(book.id);
+
                 showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
                         title: const Text("Favorites"),
-                        content: const Text("Book added to favorites."),
+                        content: Text(isAdded
+                            ? "Book added to favorites."
+                            : "Book removed from favorites."),
                         actions: [
                           ElevatedButton(
                               onPressed: () {
@@ -161,8 +245,9 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                       builder: (BuildContext context) {
                         return const RateDialog();
                       });
+
                   if (rating != null) {
-                    DatabaseConnector.rateBook(book.id, userId, rating);
+                    firebaseHandler.addRating(rating, book.id);
                     showDialog(
                         context: context,
                         builder: (BuildContext context) {

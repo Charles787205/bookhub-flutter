@@ -1,4 +1,5 @@
 import 'package:bookhub/components/auth_manager.dart';
+import 'package:bookhub/scripts/firebasehandler.dart';
 import 'package:google_books_api/google_books_api.dart';
 import 'package:bookhub/screens/categories/book_details.dart';
 import 'package:flutter/material.dart';
@@ -18,16 +19,13 @@ class Favorites extends StatefulWidget {
 class _FavoritesState extends State<Favorites> {
   @override
   Widget build(BuildContext context) {
-    var userId = context.read<AuthManager>().user!.id!;
-    Future<List<dbBook.Book>> books = DatabaseConnector.getFavorites(userId);
+    var firebaseHandler = Provider.of<FirebaseHandler>(context);
+    Future<List<Book>> books = firebaseHandler.getFavorites();
 
     void onCardClick(String bookId) async {
       Book book = await const GoogleBooksApi().getBookById(bookId);
       if (context.mounted) {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => BookDetailsPage(book: book)));
+        Navigator.pushNamed(context, '/book_details', arguments: book);
       }
     }
 
@@ -36,7 +34,7 @@ class _FavoritesState extends State<Favorites> {
         "Favorites",
         style: TextStyle(color: Colors.white),
       ),
-      child: FutureBuilder<List<dbBook.Book>>(
+      child: FutureBuilder<List<Book>>(
           future: books,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -52,9 +50,12 @@ class _FavoritesState extends State<Favorites> {
                             borderRadius: BorderRadius.circular(3)),
                         elevation: 2.0,
                         child: ListTile(
-                          leading:
-                              Image.network(snapshot.data![index].image ?? ""),
-                          title: Text(snapshot.data![index].title ?? ""),
+                          leading: Image.network(snapshot.data![index]
+                                  .volumeInfo.imageLinks?['smallThumbnail']
+                                  .toString() ??
+                              ""),
+                          title: Text(
+                              snapshot.data![index].volumeInfo.title ?? ""),
                           onTap: () => {onCardClick(snapshot.data![index].id)},
                         ));
                   });

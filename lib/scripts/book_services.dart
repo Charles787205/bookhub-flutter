@@ -5,8 +5,14 @@ class BookServices {
     if (category == "") {
       return [];
     }
-    final books = await const GoogleBooksApi()
-        .searchBooks(category, queryType: QueryType.subject);
-    return books;
+    try {
+      final books = await const GoogleBooksApi()
+          .searchBooks(category, queryType: QueryType.subject);
+      print(books);
+      return books;
+    } catch (e) {
+      print(e);
+      return [];
+    }
   }
 }

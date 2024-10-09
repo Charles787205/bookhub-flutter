@@ -1,5 +1,4 @@
-import 'package:bookhub/components/auth_manager.dart';
-import 'package:bookhub/scripts/database.dart';
+import 'package:bookhub/scripts/firebasehandler.dart';
 import 'package:flutter/material.dart';
 import 'package:google_books_api/google_books_api.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +24,8 @@ class _BorrowAlertDialogState extends State<BorrowAlertDialog> {
 
   @override
   Widget build(BuildContext context) {
+    var firebaseHandler = Provider.of<FirebaseHandler>(context);
+
     return AlertDialog(
       title: const Text("Borrow Book"),
       content: SizedBox(
@@ -83,9 +84,9 @@ class _BorrowAlertDialogState extends State<BorrowAlertDialog> {
         ElevatedButton(
             onPressed: () async {
               Navigator.pop(context);
-              var userId = context.read<AuthManager>().user!.id!;
-              DatabaseConnector.borrowBook(
-                  userId, widget.book, sliderValue, dropdownValue);
+
+              firebaseHandler.borrowBook(
+                  widget.book, sliderValue, dropdownValue);
 
               showDialog(
                   context: context,

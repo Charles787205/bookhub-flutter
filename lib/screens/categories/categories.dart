@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import "package:bookhub/screens/layout.dart";
 import "package:bookhub/objects/categories.dart";
-import 'package:bookhub/screens/categories/category.dart';
 
 class CategoriesPage extends StatelessWidget {
   const CategoriesPage({super.key});
@@ -31,13 +30,11 @@ class CategoriesPage extends StatelessWidget {
                               .split(".")[1]
                               .replaceAll("_", " ")),
                           onTap: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return CategoryPage(
-                                  category: Categories.values[index]
-                                      .toString()
-                                      .split(".")[1]);
-                            }));
+                            Navigator.pushNamed(context, "/category",
+                                arguments: Categories.values[index]
+                                    .toString()
+                                    .split(".")[1]
+                                    .replaceAll("_", " "));
                           }));
                 })));
   }

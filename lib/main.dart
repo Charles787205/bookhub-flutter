@@ -8,10 +8,11 @@ import 'package:bookhub/screens/register.dart';
 import 'package:provider/provider.dart';
 import 'package:bookhub/screens/home.dart';
 import 'package:bookhub/screens/categories/categories.dart';
-
+import 'package:bookhub/screens/categories/category.dart';
 import 'package:bookhub/screens/borrowed_books/borrowed_books.dart';
 import 'package:bookhub/screens/returned_books/returned_books.dart';
 import 'package:bookhub/screens/favorites/favorites.dart';
+import 'package:bookhub/screens/categories/book_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
@@ -48,6 +49,8 @@ class MyApp extends StatelessWidget {
         '/returned_books': (context) => const ReturnedBooksPage(),
         '/favorites': (context) => const Favorites(),
         '/home': (context) => HomePage(),
+        '/category': (context) => const CategoryPage(),
+        '/book_details': (context) => const BookDetailsPage(),
       },
     );
   }

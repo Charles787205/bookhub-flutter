@@ -11,6 +11,7 @@ class _RateDialogState extends State<RateDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+        contentPadding: const EdgeInsets.all(10),
         title: const Text("Rate Book"),
         content: SizedBox(
           height: 100,

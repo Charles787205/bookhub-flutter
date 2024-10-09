@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class HomeDrawer extends StatelessWidget {
-  HomeDrawer({super.key});
+  const HomeDrawer({super.key});
   @override
   Widget build(BuildContext context) {
     FirebaseHandler firebaseHandler = Provider.of<FirebaseHandler>(context);
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -20,15 +21,16 @@ class HomeDrawer extends StatelessWidget {
               children: [
                 CircleAvatar(
                   backgroundImage:
-                      NetworkImage(firebaseHandler.user?.photoUrl ?? ""),
+                      NetworkImage(firebaseHandler.gUser?.photoUrl ?? ""),
                 ),
                 Text(
-                  firebaseHandler.user?.displayName ?? "",
-                  style: TextStyle(color: Colors.white),
+                  "${firebaseHandler.user?.firstName} ${firebaseHandler.user?.lastName}" ??
+                      "",
+                  style: const TextStyle(color: Colors.white),
                 ),
                 Text(
                   firebaseHandler.user?.email ?? "john@example.com",
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                 ),
               ],
             ),

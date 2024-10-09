@@ -39,6 +39,5 @@ class BookRequest {
     durationNo = json['duration_no'];
     durationUnit = json['duration_unit'];
     book = json['book'] != null ? Book.fromJson(json['book']) : null;
-    user = json['user'] != null ? User.fromJson(json['user']) : null;
   }
 }

@@ -1,8 +1,5 @@
-import 'package:bookhub/components/auth_manager.dart';
 import 'package:bookhub/scripts/firebasehandler.dart';
 import 'package:flutter/material.dart';
-import 'package:bookhub/scripts/database.dart';
-import 'package:bookhub/objects/user.dart';
 import 'package:provider/provider.dart';
 import 'package:bookhub/widgets/logo.dart';
 

@@ -1,11 +1,9 @@
-import 'package:bookhub/components/auth_manager.dart';
 import 'package:bookhub/objects/borrowed_books.dart';
 import 'package:flutter/material.dart';
 import 'package:bookhub/screens/layout.dart';
 import 'package:provider/provider.dart';
-import 'package:bookhub/scripts/database.dart';
 import 'package:google_books_api/google_books_api.dart';
-import 'package:bookhub/screens/categories/book_details.dart';
+import 'package:bookhub/scripts/firebasehandler.dart';
 
 class BorrowedBooksPage extends StatefulWidget {
   const BorrowedBooksPage({super.key});
@@ -17,16 +15,16 @@ class BorrowedBooksPage extends StatefulWidget {
 class _BorrowedBooksPageState extends State<BorrowedBooksPage> {
   @override
   Widget build(BuildContext context) {
-    var userId = context.read<AuthManager>().user!.id!;
+    FirebaseHandler firebaseHandler = Provider.of<FirebaseHandler>(context);
+
     Future<List<BorrowedBooks>> borrowedBooks =
-        DatabaseConnector.getBorrowedBooks(userId);
+        firebaseHandler.getBorrowedBooks();
+
+    print(borrowedBooks);
     void onCardClick(String bookId) async {
       Book book = await const GoogleBooksApi().getBookById(bookId);
       if (context.mounted) {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => BookDetailsPage(book: book)));
+        Navigator.pushNamed(context, "/book_details", arguments: book);
       }
     }
 
@@ -40,13 +38,16 @@ class _BorrowedBooksPageState extends State<BorrowedBooksPage> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text(snapshot.toString()));
             } else {
+              print(" the data is this ${snapshot.data}");
               return ListView.builder(
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
                     var dueDate = snapshot.data![index].dueDate;
                     var daysLeft = dueDate?.difference(DateTime.now()).inDays;
-
+                    print("the due date is $dueDate");
                     return Card(
                         margin: const EdgeInsets.all(1),
                         color: Colors.white,
@@ -54,17 +55,20 @@ class _BorrowedBooksPageState extends State<BorrowedBooksPage> {
                             borderRadius: BorderRadius.circular(3)),
                         elevation: 2.0,
                         child: ListTile(
-                          leading: Image.network(
-                              snapshot.data![index].book?.image ?? ""),
-                          title: Text(snapshot.data![index].book?.title ?? ""),
+                          leading: Image.network(snapshot.data![index].book
+                                  ?.volumeInfo.imageLinks?['smallThumbnail']
+                                  .toString() ??
+                              ""),
+                          title: Text(
+                              snapshot.data![index].book?.volumeInfo.title ??
+                                  ""),
                           subtitle: daysLeft! > 0
                               ? Text("Due in $daysLeft days")
                               : const Text(
                                   "Overdue",
                                   style: TextStyle(color: Colors.red),
                                 ),
-                          onTap: () =>
-                              onCardClick(snapshot.data![index].book!.id),
+                          onTap: () => onCardClick(snapshot.data![index].id!),
                         ));
                   });
             }
